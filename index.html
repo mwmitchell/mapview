@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Leaflet MapUI</title>
+    <meta charset="utf-8" />
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.css" />
+    <!--[if lte IE 8]>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.ie.css" />
+    <![endif]-->
+    <script src="http://cdn.leafletjs.com/leaflet-0.5.1/leaflet.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <div id="map" style="width: 600px; height: 400px"></div>
+    <form id="geoJsonForm">
+        <label>GeoJSON goes here</label>
+        <textarea rows="10" type="text" id="geojsonData">{
+              "type": "FeatureCollection", 
+              "features": [
+                {"geometry": {
+                    "type": "GeometryCollection", 
+                    "geometries": [
+                        {
+                            "type": "LineString", 
+                            "coordinates": 
+                                [[11.0878902207, 45.1602390564], 
+                                [15.01953125, 48.1298828125]]
+                        }, 
+                        {
+                            "type": "Polygon", 
+                            "coordinates": 
+                                [[[11.0878902207, 45.1602390564], 
+                                  [14.931640625, 40.9228515625], 
+                                  [0.8251953125, 41.0986328125], 
+                                  [7.63671875, 48.96484375], 
+                                  [11.0878902207, 45.1602390564]]]
+                        },
+                        {
+                            "type":"Point", 
+                            "coordinates":[15.87646484375, 44.1748046875]
+                        }
+                    ]
+                }, 
+                "type": "Feature", 
+                "properties": {}}
+              ]
+           }</textarea>
+        <input type="submit" value="Load"/>
+    </form>
+
+    <script>
+        jQuery(function(){
+            var map = L.map('map');
+            var feature = null;
+            L.tileLayer('http://{s}.tile.cloudmade.com/{key}/22677/256/{z}/{x}/{y}.png', {
+                key: 'BC9A493B41014CAABB98F0471D759707'
+            }).addTo(map);
+            $("#geoJsonForm").submit(function(e){
+                if(feature) {map.removeLayer(feature)}
+                var raw = $("#geojsonData").val();
+                var geojson = jQuery.parseJSON(raw);
+                feature = L.geoJson(geojson, {});
+                feature.addTo(map);
+                map.fitBounds(feature.getBounds());
+                return false;
+            });
+            //$("#geoJsonForm").trigger("submit");
+        });
+    </script>
+
+</body>
+</html>
